@@ -3,7 +3,7 @@
 // signal (in placement, on the ward, on an overnight shift). Bump CACHE_NAME
 // whenever you change index.html so returning devices pick up the update
 // instead of being stuck on a stale cached copy.
-const CACHE_NAME = 'kekes-days-v1';
+const CACHE_NAME = 'kekes-days-v5';
 const APP_SHELL = [
   './',
   './index.html'
