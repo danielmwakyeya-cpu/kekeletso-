@@ -68,7 +68,7 @@ body{
   font-family:'Work Sans', sans-serif;
   color:var(--cream);
   min-height:100vh;
-  padding:40px 16px 70px;
+  padding:0 16px calc(96px + env(safe-area-inset-bottom));
   position:relative;
 }
 
@@ -93,6 +93,7 @@ body::before{
 .day-btn,
 .util-btn,
 .add-slot,
+.fab-add,
 .template-chip,
 .reset-btn,
 .edit-actions button,
@@ -106,6 +107,7 @@ body::before{
 .day-btn:active,
 .util-btn:active,
 .add-slot:active,
+.fab-add:active,
 .template-chip:active,
 .reset-btn:active,
 .edit-actions button:active,
@@ -115,43 +117,31 @@ body::before{
   transform:scale(0.96);
 }
 
-.wrap{max-width:840px;margin:0 auto;}
+.wrap{max-width:840px;margin:0 auto; padding-bottom:24px;}
 
-header{text-align:center;margin-bottom:22px;}
-
-.eyebrow{
-  font-size:11px;
-  letter-spacing:4px;
-  text-transform:uppercase;
-  color:var(--gold);
-  font-weight:600;
-  margin-bottom:10px;
+/* Slim persistent top bar — replaces the old full hero block. Sticky so
+   it's always available as an orientation anchor, but small enough that
+   it never competes with the day's actual content for space. */
+.top-bar{
+  position:sticky;
+  top:0;
+  z-index:5;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px 4px;
+  margin:0 -16px 18px;
+  background:rgba(var(--ink-rgb), 0.85);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(var(--gold-rgb), 0.16);
 }
-
-h1{
+.top-bar-title{
   font-family:'Fraunces', serif;
-  font-weight:700;
-  font-size:clamp(34px,7vw,52px);
-  background:linear-gradient(180deg, var(--cream) 20%, var(--gold-soft) 100%);
-  -webkit-background-clip:text;
-  background-clip:text;
-  color:transparent;
-  line-height:1.05;
-}
-
-.subtitle{
-  margin-top:12px;
-  font-size:14.5px;
-  color:var(--muted);
-  max-width:460px;
-  margin-left:auto;
-  margin-right:auto;
-}
-
-.gold-rule{
-  width:64px;height:2px;
-  margin:20px auto;
-  background:linear-gradient(90deg, transparent, var(--gold), transparent);
+  font-weight:600;
+  font-size:19px;
+  color:var(--cream);
+  letter-spacing:0.2px;
 }
 
 /* Stats bar */
@@ -283,30 +273,48 @@ h1{
 .custom-swatch input[type="color"]::-moz-color-swatch{border:none; border-radius:50%;}
 
 /* View toggle */
+/* Bottom tab bar — the app's primary navigation. Fixed, persistent,
+   thumb-reachable; Today/Week/Insights/Settings each get equal real
+   estate instead of living as buttons scattered through a long scroll. */
 .view-toggle{
+  position:fixed;
+  left:0; right:0; bottom:0;
+  z-index:20;
   display:flex;
-  justify-content:center;
-  gap:6px;
-  margin-bottom:22px;
+  justify-content:space-around;
+  align-items:stretch;
+  gap:2px;
+  background:rgba(var(--plum-rgb), 0.92);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-top:1px solid rgba(var(--gold-rgb), 0.18);
+  padding:8px 6px calc(8px + env(safe-area-inset-bottom));
+  box-shadow:0 -8px 24px rgba(0,0,0,0.25);
 }
 .view-toggle button{
-  padding:9px 20px;
-  border-radius:999px;
-  border:1px solid rgba(var(--gold-rgb), 0.3);
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+  padding:6px 4px;
+  border-radius:12px;
+  border:none;
   background:none;
-  color:var(--cream-dim);
+  color:var(--muted);
   font-family:'Work Sans', sans-serif;
   font-weight:600;
-  font-size:13px;
+  font-size:10.5px;
   cursor:pointer;
   transition:all 0.2s ease;
 }
+.view-toggle button .tab-icon{font-size:19px; line-height:1;}
 .view-toggle button.active{
-  background:var(--gold);
-  color:var(--ink);
-  border-color:var(--gold);
+  color:var(--gold-soft);
+  background:rgba(var(--gold-rgb), 0.12);
 }
-.view-toggle button:hover:not(.active){border-color:var(--gold);}
+.view-toggle button:hover:not(.active){color:var(--cream-dim);}
 
 /* Next up banner */
 .next-up{
@@ -742,21 +750,37 @@ h1{
 .btn-cancel:hover{background:rgba(255,255,255,0.14);}
 .btn-delete:hover{text-decoration:underline;}
 
-.add-slot{
-  width:100%;
-  margin-top:14px;
-  padding:13px;
-  border-radius:12px;
-  border:1px dashed rgba(var(--gold-rgb), 0.4);
-  background:none;
-  color:var(--gold);
-  font-family:'Work Sans', sans-serif;
+/* Floating action button — the app's one primary "create" action, always
+   reachable with a thumb, sitting above the tab bar rather than buried at
+   the bottom of a scrolling task list. */
+.fab-add{
+  position:fixed;
+  right:20px;
+  bottom:calc(78px + env(safe-area-inset-bottom));
+  z-index:19;
+  width:56px;height:56px;
+  border-radius:50%;
+  border:none;
+  background:linear-gradient(160deg, var(--terracotta), var(--gold));
+  color:var(--ink);
+  font-size:28px;
   font-weight:600;
-  font-size:13px;
+  line-height:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   cursor:pointer;
-  transition:all 0.2s ease;
+  box-shadow:0 10px 26px rgba(var(--terracotta-rgb), 0.45), 0 2px 6px rgba(0,0,0,0.3);
 }
-.add-slot:hover{background:rgba(var(--gold-rgb), 0.08); border-color:var(--gold);}
+.fab-add:hover{filter:brightness(1.08);}
+
+.insights-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:center;
+  margin-top:20px;
+}
 
 /* Quick templates */
 .template-row{
@@ -1230,23 +1254,8 @@ footer span{color:var(--gold);}
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <div class="eyebrow">A Weekly Rhythm</div>
-    <h1>Keke's Days</h1>
-    <p class="subtitle">Wake at 8, tend to what matters, rest when it's earned.</p>
-  </header>
-
-  <div class="gold-rule"></div>
-
-  <div class="stats-bar" id="statsBar"></div>
-
-  <div id="weeklyReviewCard"></div>
-
-  <div id="insightCard"></div>
-
-  <div class="view-toggle" id="viewToggle">
-    <button data-view="day" class="active">Day view</button>
-    <button data-view="week">Week view</button>
+  <div class="top-bar">
+    <span class="top-bar-title">Keke's Days</span>
   </div>
 
   <div id="nextUp" aria-live="polite"></div>
@@ -1265,7 +1274,6 @@ footer span{color:var(--gold);}
       </div>
       <div class="day-note" id="dayNote" contenteditable="false"></div>
       <div id="slotList"></div>
-      <button class="add-slot" id="addSlotBtn">+ Add task</button>
       <div class="template-row" id="templateRow"></div>
     </div>
   </div>
@@ -1274,11 +1282,14 @@ footer span{color:var(--gold);}
     <div class="week-grid" id="weekGrid"></div>
   </div>
 
-  <div class="settings-row">
-    <button class="settings-btn" id="settingsBtn">&#9881; Settings</button>
-    <button class="install-btn" id="installBtn">
-      <span class="install-icon">&#10133;</span> Add to Home Screen
-    </button>
+  <div id="pageInsights" style="display:none;">
+    <div class="stats-bar" id="statsBar"></div>
+    <div id="weeklyReviewCard"></div>
+    <div id="insightCard"></div>
+    <div class="insights-actions">
+      <button class="util-btn" id="viewWeeklyReviewBtn">&#128203; Full weekly review</button>
+      <button class="util-btn" id="viewPastWeeksBtn">&#128197; Past weeks</button>
+    </div>
   </div>
 
   <div class="undo-toast" id="undoToast">
@@ -1288,6 +1299,15 @@ footer span{color:var(--gold);}
 
   <footer>made with a little yarn and a lot of intention <span>&#10022;</span></footer>
 </div>
+
+<button class="fab-add" id="addSlotBtn" aria-label="Add task">+</button>
+
+<nav class="view-toggle" id="viewToggle">
+  <button data-view="day" class="active"><span class="tab-icon">&#9728;&#65039;</span><span class="tab-label">Today</span></button>
+  <button data-view="week"><span class="tab-icon">&#128197;</span><span class="tab-label">Week</span></button>
+  <button data-view="insights"><span class="tab-icon">&#128202;</span><span class="tab-label">Insights</span></button>
+  <button class="settings-btn" id="settingsBtn"><span class="tab-icon">&#9881;&#65039;</span><span class="tab-label">Settings</span></button>
+</nav>
 
 <div class="modal-overlay" id="settingsOverlay">
   <div class="modal-card">
@@ -1342,6 +1362,14 @@ footer span{color:var(--gold);}
           <button class="util-btn" id="exportBtn">&#11015; Export backup</button>
           <button class="util-btn" id="importBtn">&#11014; Import backup</button>
           <input type="file" id="importFileInput" accept="application/json" style="display:none;">
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-section-label">App</div>
+        <div class="settings-row-item">
+          <button class="install-btn" id="installBtn">
+            <span class="install-icon">&#10133;</span> Add to Home Screen
+          </button>
         </div>
       </div>
     </div>
@@ -2647,11 +2675,8 @@ function renderWeek(){
     `;
     card.addEventListener('click', () => {
       activeDay = day;
-      currentView = 'day';
-      document.querySelectorAll('.view-toggle button').forEach(b => b.classList.toggle('active', b.dataset.view === 'day'));
-      document.getElementById('dayView').style.display = 'block';
-      document.getElementById('weekView').style.display = 'none';
       renderDay();
+      showTab('day');
     });
     grid.appendChild(card);
   });
@@ -2737,24 +2762,32 @@ document.getElementById('resetWeekBtn').addEventListener('click', () => {
   });
 });
 
-/* ---- view toggle ---- */
-function switchToDayView(){
-  currentView = 'day';
-  document.querySelectorAll('.view-toggle button').forEach(b => b.classList.toggle('active', b.dataset.view === 'day'));
-  document.getElementById('dayView').style.display = 'block';
-  document.getElementById('weekView').style.display = 'none';
+/* ---- tab bar (Today / Week / Insights) ----
+   One shared function drives every entry point that changes which page
+   is visible — the delegated tab-bar click, jumping to a specific day
+   from an insight card, and tapping a week-card to open that day. */
+function showTab(view){
+  currentView = view;
+  document.querySelectorAll('.view-toggle button[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+  document.getElementById('settingsBtn').classList.remove('active');
+  document.getElementById('dayView').style.display = view === 'day' ? 'block' : 'none';
+  document.getElementById('weekView').style.display = view === 'week' ? 'block' : 'none';
+  document.getElementById('pageInsights').style.display = view === 'insights' ? 'block' : 'none';
+  document.getElementById('addSlotBtn').style.display = view === 'day' ? 'flex' : 'none';
+  if(view === 'week') renderWeek();
+  if(view === 'insights'){ renderStats(); renderInsightCard(); renderWeeklyReviewCard(true); }
   renderNextUp();
+  window.scrollTo({top:0, behavior:'auto'});
+}
+
+function switchToDayView(){
+  showTab('day');
 }
 
 document.getElementById('viewToggle').addEventListener('click', (e) => {
   const btn = e.target.closest('button[data-view]');
   if(!btn) return;
-  currentView = btn.dataset.view;
-  document.querySelectorAll('.view-toggle button').forEach(b => b.classList.toggle('active', b === btn));
-  document.getElementById('dayView').style.display = currentView === 'day' ? 'block' : 'none';
-  document.getElementById('weekView').style.display = currentView === 'week' ? 'block' : 'none';
-  if(currentView === 'week') renderWeek();
-  renderNextUp();
+  showTab(btn.dataset.view);
 });
 
 /* ---- quick task templates ---- */
@@ -2943,16 +2976,33 @@ function checkReminders(){
 
 /* ---- past weeks history ---- */
 const settingsOverlay = document.getElementById('settingsOverlay');
-document.getElementById('settingsBtn').addEventListener('click', () => settingsOverlay.classList.add('open'));
-document.getElementById('settingsModalClose').addEventListener('click', () => settingsOverlay.classList.remove('open'));
-document.getElementById('settingsModalOk').addEventListener('click', () => settingsOverlay.classList.remove('open'));
-settingsOverlay.addEventListener('click', (e) => { if(e.target === settingsOverlay) settingsOverlay.classList.remove('open'); });
+document.getElementById('settingsBtn').addEventListener('click', () => {
+  settingsOverlay.classList.add('open');
+  document.querySelectorAll('.view-toggle button[data-view]').forEach(b => b.classList.remove('active'));
+  document.getElementById('settingsBtn').classList.add('active');
+});
+function closeSettingsOverlay(){
+  settingsOverlay.classList.remove('open');
+  document.getElementById('settingsBtn').classList.remove('active');
+  document.querySelectorAll('.view-toggle button[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === currentView));
+}
+document.getElementById('settingsModalClose').addEventListener('click', closeSettingsOverlay);
+document.getElementById('settingsModalOk').addEventListener('click', closeSettingsOverlay);
+settingsOverlay.addEventListener('click', (e) => { if(e.target === settingsOverlay) closeSettingsOverlay(); });
+
+document.getElementById('viewWeeklyReviewBtn').addEventListener('click', () => {
+  document.getElementById('weeklyReviewBtn').click();
+});
+document.getElementById('viewPastWeeksBtn').addEventListener('click', () => {
+  document.getElementById('historyBtn').click();
+});
 // History/export/import live inside Settings now — step out of the way once one of them is actually used.
 ['historyBtn','exportBtn','importBtn','weeklyReviewBtn'].forEach(id => {
-  document.getElementById(id).addEventListener('click', () => settingsOverlay.classList.remove('open'));
+  document.getElementById(id).addEventListener('click', () => closeSettingsOverlay());
 });
 
 document.getElementById('weeklyReviewBtn').addEventListener('click', () => {
+  showTab('insights');
   renderWeeklyReviewCard(true);
   document.getElementById('weeklyReviewCard').scrollIntoView({behavior:'smooth', block:'start'});
 });
